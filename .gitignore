@@ -1,0 +1,8 @@
+# Sanal ortam klasörünü yok say
+.venv/
+
+# Python'un oluşturduğu cache dosyalarını yok say
+__pycache__/
+
+# VS Code ayar klasörünü yok say
+.vscode/
