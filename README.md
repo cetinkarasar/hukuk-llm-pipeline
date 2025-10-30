@@ -14,8 +14,7 @@ hf_repo_name = "Cetin003/hukuk_model_tck_v1_lora"
 
 print(f"Model yükleniyor: {hf_repo_name}")
 
-# Unsloth, sizin reponuzdan hem ana modeli hem de LoRA adaptörlerini
-# otomatik olarak yükleyip birleştirecektir.
+
 model, tokenizer = FastLanguageModel.from_pretrained(
     model_name = hf_repo_name,
     load_in_4bit = True,
@@ -39,21 +38,20 @@ alpaca_prompt = """Aşağıda, bir görevi açıklayan bir talimat (instruction)
 ### Yanıt:
 {}"""
 
-# Test için bir talimat ve girdi
+
 instruction = "Bu kanun maddesini bir vatandaşa açıklıyormuş gibi daha basit bir dille anlat."
 input_text = "(TCK Madde 204) (1) Bir resmî belgeyi sahte olarak düzenleyen, gerçek bir resmî belgeyi başkalarını aldatacak şekilde değiştiren veya sahte resmî belgeyi kullanan kişi, iki yıldan beş yıla kadar hapis cezası ile cezalandırılır."
 
-# Modeli test etmek için prompt'u formatlıyoruz
+
 prompt = alpaca_prompt.format(
     instruction,
     input_text,
     "" # Yanıt kısmı boş
 )
 
-# Tokenize et ve GPU'ya gönder
+
 inputs = tokenizer([prompt], return_tensors = "pt", padding = False, truncation = True).to("cuda")
 
-# Sizin optimize ettiğiniz, en iyi sonucu veren inference parametreleri
 outputs = model.generate(
     **inputs,
     max_new_tokens = 512,
@@ -65,12 +63,10 @@ outputs = model.generate(
     top_k = 40
 )
 
-# Üretilen cevabı decode et ve yazdır
 decoded_output = tokenizer.batch_decode(outputs, skip_special_tokens=True)[0]
 
 print("\n--- Modelin Cevabı ---")
 
-# Sadece yanıtı görmek için
 response_start_index = decoded_output.find("### Yanıt:")
 if response_start_index != -1:
     response = decoded_output[response_start_index + len("### Yanıt:"):]
